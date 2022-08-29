@@ -110,13 +110,13 @@ function open_upd(row) {
 		if(row==null) {alert("请先点击选择行!"); return;}
 		if(row.length > 1) {alert("请选择一行!"); return;}
 	}
-	$("#upd-ok-btn")[0].onclick = function(){upd();};
+	$("#upd-ok-btn")[0].onclick = function(){upd(row); };
 	$("#upd-win").window("setTitle","修改").window("open");
 }
 
-function upd() {
+function upd(row) {
 	var prm = {
-		id: $('#id').val(),
+		id: row.id,
 		name: $("#name").val(),
 		birthDay: $("#birthDay").datebox('getValue'),
 		sex: $('#sex').val(),

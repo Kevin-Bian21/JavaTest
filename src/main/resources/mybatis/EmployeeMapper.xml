@@ -3,12 +3,12 @@
 
 <mapper namespace="com.test.dao.EmployeeDao">
 
-    <select id="list" resultType="com.test.domain.Employee">
+    <select id="list" resultType="com.test.domain.Employee" parameterType="map">
         select
         `id`,`name`,`birth_day`,`sex`,`depart_name`
         from employee
         <where>
-            <if test="name != null and name != ''"> name = #{name} </if>
+            <if test="name != null and name != ''"> name like concat('%', #{name}, '%') </if>
         </where>
         <if test="offset != null and limit != null">
             limit #{offset}, #{limit}
@@ -20,22 +20,22 @@
         	count(*)
         from employee
         <where>
-            <if test="name != null and name != ''"> name = #{name} </if>
+            <if test="name != null and name != ''"> name like concat('%', #{name}, '%') </if>
         </where>
     </select>
 
     <insert id="save" parameterType="com.test.domain.Employee" useGeneratedKeys="true" keyProperty="id">
 		insert into employee (`name`,`birth_day`, `sex`, `depart_name`)
-		 values(#{name}, #{birth_day}, #{sex}, #{depart_name})
+		 values(#{name}, #{birthDay}, #{sex}, #{departName})
 	</insert>
 
     <update id="update" parameterType="com.test.domain.Employee">
         update employee
         <set>
             <if test="name != null and name != ''"> name = #{name}</if>
-            <if test="birthDay != null and birthDay != ''">and birth_day = #{birthDay}</if>
-            <if test="sex != null and sex != ''">and sex = #{sex}</if>
-            <if test="departName != null and departName != ''">and depart_name = #{departName}</if>
+            <if test="birthDay != null and birthDay != ''">, birth_day = #{birthDay}</if>
+            <if test="sex != null and sex != ''">, sex = #{sex}</if>
+            <if test="departName != null and departName != ''">, depart_name = #{departName}</if>
         </set>
         where id = #{id}
     </update>
@@ -45,7 +45,10 @@
 	</delete>
 
     <delete id="batchRemove">
-       delete from employee where id = #{id}
+       delete from employee where
+        <foreach collection="array" item="id"  separator="or">
+            id = #{id}
+        </foreach>
     </delete>
 
 </mapper>

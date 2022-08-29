@@ -7,20 +7,20 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.test.dao.EmployeeDao;
 import com.test.domain.Employee;
 
+import javax.annotation.Resource;
+
 @Controller
 public class EmployeeController {
 
-	@Autowired
+	@Resource
 	private EmployeeDao employeeDao;
-	
-    @RequestMapping("/employee")
+
+    @GetMapping("/employee")
     public String index(Model model) {
         return "employee";
     }
@@ -33,13 +33,14 @@ public class EmployeeController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/grid")
+    @PostMapping("/grid")
     public Map<String,Object> grid(String name,int page, int rows) {
     	Map<String,Object> map = new HashMap<String, Object>(); 
-    	map.put("offset", page);
+    	map.put("offset", (page-1)*rows);
     	map.put("limit", rows);
     	map.put("name", name);
-    	List<Employee> res =  employeeDao.list(map);
+
+		List<Employee> res =  employeeDao.list(map);
     	int total =  employeeDao.count(map);
     	map.put("total",total);//总数
     	map.put("rows",res);//分页数据
@@ -55,7 +56,7 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value="/upd")
   	public Map<String,Object> upd(Employee employee){
-    	Map<String,Object> map = new HashMap<String, Object>(); 
+    	Map<String,Object> map = new HashMap<String, Object>();
     	try {
     		employeeDao.update(employee);
     		map.put("code",1);
@@ -74,7 +75,7 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value="/ins")
 	public Map<String,Object> ins(Employee employee){
-    	Map<String,Object> map = new HashMap<String, Object>(); 
+    	Map<String,Object> map = new HashMap<String, Object>();
     	try {
     		employeeDao.save(employee);
     		map.put("code",1);
@@ -112,13 +113,21 @@ public class EmployeeController {
     @ResponseBody
 	@RequestMapping(value="/batchDel")
 	public Map<String,Object> batchDel(@RequestParam("ids[]") Integer[] ids){
-		Map<String,Object> map = new HashMap<String, Object>(); 
-    	try {
-    		employeeDao.batchRemove(ids);
-    		map.put("code",1);
-		} catch (Exception e) {
-			map.put("code",0);
-			map.put("msg", e.toString());
+		for (int i = 0; i < ids.length; i++) {
+			System.out.println(ids[i]);
+		}
+		Map<String,Object> map = new HashMap<String, Object>();
+		int count = 0;
+		for (int i = 0; i < ids.length; i++) {
+			try {
+				count = employeeDao.batchRemove(ids);
+			} catch (Exception e) {
+				map.put("code",0);
+				map.put("msg", e.toString());
+			}
+		}
+		if (count > 0) {
+			map.put("code",1);
 		}
       	return map;
 	}

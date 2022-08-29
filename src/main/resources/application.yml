@@ -20,6 +20,6 @@ spring:
       
 mybatis:
   configuration:
-    map-underscore-to-camel-case: true
+    mapUnderscoreToCamelCase: true
   mapper-locations: mybatis/*Mapper.xml
   typeAliasesPackage: com.test.domain

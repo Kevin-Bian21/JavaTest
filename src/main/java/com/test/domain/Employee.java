@@ -1,6 +1,10 @@
 package com.test.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
+import java.util.Date;
 
 public class Employee implements Serializable {
 
@@ -8,6 +12,8 @@ public class Employee implements Serializable {
 
 	private Integer id;// 编号
 	private String name;// 姓名
+//	@DateTimeFormat(pattern = "yyyy-MM-dd")
+//	@JsonFormat(pattern = "yyyy-MM-dd")
 	private String birthDay;// 出生年月 yyyy-MM-dd
 	private String sex;// 性别 1男 2女
 	private String departName;// 所属部门名称
